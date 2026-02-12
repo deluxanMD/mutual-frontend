@@ -1,0 +1,39 @@
+name: Pull request into dev, main
+
+on:
+  pull_request:
+    branches:
+      - 'dev'
+      - 'main'
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Node modules
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Prettier
+        run: npm run format:check
+
+      - name: Jest
+        run: npm run test
+
+      - name: Cypress Component Test
+        run: npm run ct:run
+
+      - name: Cypress E2E Test
+        run: npm run cy:run
+
+        # Deploy to dev environment if the pull request is into dev branch
